@@ -1,4 +1,6 @@
-export function ResultsTable({ results, onDownload }) {
+import { buildRenamedFilename } from '../utils/parseNameSurname.js';
+
+export function ResultsTable({ results, onDownload, pattern }) {
   return (
     <section className="results">
       <h2 className="results-title">Processed files</h2>
@@ -15,29 +17,40 @@ export function ResultsTable({ results, onDownload }) {
             </tr>
           </thead>
           <tbody>
-            {results.map((r) => (
-              <tr key={r.id} className={[r.error && 'results-row--error', (r.name === 'unknown' || r.surname === 'unknown') && 'results-row--unknown'].filter(Boolean).join(' ')}>
-                <td className="results-cell results-cell--file">{r.originalName}</td>
-                <td className="results-cell results-cell--file">{r.originalName}</td>
-                <td className="results-cell">{r.name}</td>
-                <td className="results-cell">{r.surname}</td>
-                <td className="results-cell results-cell--filename">
-                  {r.downloadName ?? (r.error ? '—' : '—')}
-                </td>
-                <td className="results-cell results-cell--action">
-                  {r.downloadName && (
-                    <button
-                      type="button"
-                      className="btn-download"
-                      onClick={() => onDownload(r)}
-                    >
-                      Download
-                    </button>
-                  )}
-                  {r.error && <span className="results-error">{r.error}</span>}
-                </td>
-              </tr>
-            ))}
+            {results.map((r) => {
+              const downloadName = buildRenamedFilename(r.name, r.surname, pattern);
+              return (
+                <tr
+                  key={r.id}
+                  className={[
+                    r.error && 'results-row--error',
+                    (r.name === 'unknown' || r.surname === 'unknown') && 'results-row--unknown',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <td className="results-cell results-cell--file">{r.originalName}</td>
+                  <td className="results-cell results-cell--file">{r.originalName}</td>
+                  <td className="results-cell">{r.name}</td>
+                  <td className="results-cell">{r.surname}</td>
+                  <td className="results-cell results-cell--filename">
+                    {downloadName || (r.error ? '—' : '—')}
+                  </td>
+                  <td className="results-cell results-cell--action">
+                    {downloadName && (
+                      <button
+                        type="button"
+                        className="btn-download"
+                        onClick={() => onDownload(r, downloadName)}
+                      >
+                        Download
+                      </button>
+                    )}
+                    {r.error && <span className="results-error">{r.error}</span>}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -1,12 +1,12 @@
 {
-  "name": "passports-renamer",
+  "name": "document-parser",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "../passports-renamer-1/node_modules/.bin/vite",
-    "build": "../passports-renamer-1/node_modules/.bin/vite build",
-    "preview": "../passports-renamer-1/node_modules/.bin/vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "pdfjs-dist": "^4.0.379",
