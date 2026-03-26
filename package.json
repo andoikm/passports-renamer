@@ -3,19 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": ["client", "backend"],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "pdfjs-dist": "^4.0.379",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tesseract.js": "^5.0.4"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.0"
+    "dev": "node scripts/dev.js",
+    "build": "npm -w client run build",
+    "client": "npm -w client run dev",
+    "backend": "npm -w backend run dev"
   }
 }
