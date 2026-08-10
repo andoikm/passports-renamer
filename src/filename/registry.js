@@ -75,7 +75,7 @@ export const FILENAME_FIELD_REGISTRY = {
     optionFields: [
       {
         key: 'format',
-        label: 'Format',
+        label: '',
         options: [
           { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
           { value: 'YYYYMMDD', label: 'YYYYMMDD' },
