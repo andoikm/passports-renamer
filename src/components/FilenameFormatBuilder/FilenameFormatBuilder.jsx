@@ -238,7 +238,6 @@ export function FilenameFormatBuilder({
                 {s.label}
               </option>
             ))}
-            <option value="__custom__">Custom…</option>
           </select>
         </div>
 
