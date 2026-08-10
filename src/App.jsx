@@ -137,6 +137,18 @@ export default function App() {
     );
   }, []);
 
+  const handleDeleteResult = useCallback((row) => {
+    if (!row?.id) return;
+    setResults((prev) => prev.filter((item) => item.id !== row.id));
+    setSelectedRow((prev) => {
+      if (prev?.id === row.id) {
+        setPdfEditorOpen(false);
+        return null;
+      }
+      return prev;
+    });
+  }, []);
+
   const pdfFocusProxy = useRef({
     get current() {
       return pdfReturnFocusRef.current;
@@ -197,6 +209,7 @@ export default function App() {
           onDownload={handleDownload}
           buildFilename={buildNameForResult}
           onViewPdf={handleViewPdf}
+          onDelete={handleDeleteResult}
         />
       )}
 

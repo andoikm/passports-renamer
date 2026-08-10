@@ -5,7 +5,7 @@ function isUnknownResult(r) {
   return r.name === 'unknown' || r.surname === 'unknown';
 }
 
-export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) {
+export function ResultsTable({ results, onDownload, buildFilename, onViewPdf, onDelete }) {
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
   const viewButtonRefs = useRef(/** @type {Record<string, HTMLButtonElement | null>} */ ({}));
@@ -179,6 +179,21 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
                           )}
                         </button>
                       )}
+                      <button
+                        type="button"
+                        className="results-icon-btn results-icon-btn--danger"
+                        title="Delete"
+                        aria-label={`Delete ${r.originalName}`}
+                        disabled={downloadingAll || downloadingId === r.id}
+                        onClick={() => onDelete?.(r)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                          <line x1="10" y1="11" x2="10" y2="17" />
+                          <line x1="14" y1="11" x2="14" y2="17" />
+                        </svg>
+                      </button>
                     </div>
                     {r.error && <span className="results-error">{r.error}</span>}
                   </td>

@@ -490,6 +490,12 @@
   border-color: var(--primary);
 }
 
+.results-icon-btn--danger:hover:not(:disabled) {
+  color: var(--destructive-foreground);
+  background: var(--destructive);
+  border-color: var(--destructive);
+}
+
 .results-icon-btn--loading {
   pointer-events: none;
 }
