@@ -8,6 +8,7 @@ const INVALID_CHARS = /[<>:"/\\|?*\u0000-\u001f]/g;
 
 /**
  * Sanitize a single filename segment (not the full path).
+ * Spaces inside a part are removed (historical product behavior).
  * @param {unknown} value
  * @param {{ fallback?: string | null, lowercase?: boolean }} [options]
  * @returns {string}
@@ -20,15 +21,13 @@ export function sanitizeFilenamePart(value, options = {}) {
   let s = String(value).trim();
   if (!s) return fallback ?? '';
 
-  // Normalize whitespace to a single underscore-friendly space first
+  // Normalize whitespace then strip characters illegal on common filesystems
   s = s.replace(/\s+/g, ' ');
-
-  // Strip characters illegal on common filesystems
   s = s.replace(INVALID_CHARS, '');
 
-  // Collapse remaining unsafe punctuation; keep letters/numbers/._- and spaces
-  // then convert spaces to nothing matching prior project behavior (spaces removed)
+  // Keep letters/numbers/._- ; drop other punctuation
   s = s.replace(/[^a-zA-Z0-9._\-\s]/g, '');
+  // Spaces inside a *part* are removed (e.g. "John Michael" → "johnmichael")
   s = s.replace(/\s+/g, '');
 
   if (lowercase) {
@@ -42,13 +41,26 @@ export function sanitizeFilenamePart(value, options = {}) {
 }
 
 /**
- * Sanitize a full base name (already joined), still without extension.
+ * Sanitize a joined filename base (parts already sanitized + separator applied).
+ * Preserves spaces so a space separator remains intact.
  * @param {unknown} value
  * @returns {string}
  */
 export function sanitizeFilenameBase(value) {
-  const cleaned = sanitizeFilenamePart(value, { fallback: 'unknown' });
-  return cleaned || 'unknown';
+  if (value == null) return 'unknown';
+
+  let s = String(value).trim();
+  if (!s) return 'unknown';
+
+  s = s.replace(INVALID_CHARS, '');
+  // Allow spaces here — they may be the configured separator between parts
+  s = s.replace(/[^a-zA-Z0-9._\-\s]/g, '');
+  // Collapse runs of whitespace to a single space (do not remove entirely)
+  s = s.replace(/\s+/g, ' ').trim();
+  s = s.toLowerCase();
+  s = s.replace(/^\.+|\.+$/g, '');
+
+  return s || 'unknown';
 }
 
 /**

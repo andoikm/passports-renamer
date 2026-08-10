@@ -97,12 +97,15 @@ describe('static text', () => {
 });
 
 describe('separator', () => {
-  it('supports underscore, dash, and none', () => {
+  it('supports underscore, dash, space, and none', () => {
     expect(generateFilename(config(['firstName', 'lastName'], '_'), sample, 'pdf')).toBe(
       'john_smith.pdf'
     );
     expect(generateFilename(config(['firstName', 'lastName'], '-'), sample, 'pdf')).toBe(
       'john-smith.pdf'
+    );
+    expect(generateFilename(config(['firstName', 'lastName'], ' '), sample, 'pdf')).toBe(
+      'john smith.pdf'
     );
     expect(generateFilename(config(['firstName', 'lastName'], ''), sample, 'pdf')).toBe(
       'johnsmith.pdf'
