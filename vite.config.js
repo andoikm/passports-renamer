@@ -6,4 +6,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['pdfjs-dist'],
   },
+  test: {
+    environment: 'node',
+    setupFiles: ['./vitest.setup.js'],
+  },
 });

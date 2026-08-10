@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { processFile } from './utils/processFile.js';
 import { generateFilename, toFilenameData } from './filename/index.js';
 import { UploadZone } from './components/UploadZone.jsx';
@@ -10,6 +10,12 @@ import { useTheme } from './hooks/useTheme.js';
 import { useFilenameConfig } from './hooks/useFilenameConfig.js';
 import './App.css';
 
+const PdfEditorModal = lazy(() =>
+  import('./components/PdfEditorModal/PdfEditorModal.jsx').then((m) => ({
+    default: m.PdfEditorModal,
+  }))
+);
+
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const filename = useFilenameConfig();
@@ -20,6 +26,10 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState('');
   const [navScrolled, setNavScrolled] = useState(false);
+
+  const [pdfEditorOpen, setPdfEditorOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const pdfReturnFocusRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.classList.add('theme-ready');
@@ -92,6 +102,47 @@ export default function App() {
     [filename.config]
   );
 
+  const handleViewPdf = useCallback((row, options = {}) => {
+    pdfReturnFocusRef.current = options.returnFocusRef?.current ?? null;
+    setSelectedRow(row);
+    setPdfEditorOpen(true);
+  }, []);
+
+  const handleClosePdfEditor = useCallback(() => {
+    setPdfEditorOpen(false);
+    setSelectedRow(null);
+  }, []);
+
+  const handlePdfSaved = useCallback(async (payload) => {
+    setResults((prev) =>
+      prev.map((item) => {
+        if (item.id !== payload.id) return item;
+        return {
+          ...item,
+          name: payload.name,
+          surname: payload.surname,
+          file: payload.file || item.file,
+        };
+      })
+    );
+    setSelectedRow((prev) =>
+      prev && prev.id === payload.id
+        ? {
+            ...prev,
+            name: payload.name,
+            surname: payload.surname,
+            file: payload.file || prev.file,
+          }
+        : prev
+    );
+  }, []);
+
+  const pdfFocusProxy = useRef({
+    get current() {
+      return pdfReturnFocusRef.current;
+    },
+  });
+
   return (
     <div className="app">
       <header className={`app-nav ${navScrolled ? 'app-nav--scrolled' : ''}`}>
@@ -145,8 +196,19 @@ export default function App() {
           results={results}
           onDownload={handleDownload}
           buildFilename={buildNameForResult}
+          onViewPdf={handleViewPdf}
         />
       )}
+
+      <Suspense fallback={null}>
+        <PdfEditorModal
+          open={pdfEditorOpen}
+          row={selectedRow}
+          onClose={handleClosePdfEditor}
+          onSaved={handlePdfSaved}
+          returnFocusRef={pdfFocusProxy}
+        />
+      </Suspense>
 
       <footer className="footer">
         <span className="footer__lock">

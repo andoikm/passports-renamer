@@ -427,6 +427,45 @@
   white-space: nowrap;
 }
 
+.results-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.results-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition:
+    background-color var(--duration) var(--ease),
+    border-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+
+.results-icon-btn:hover:not(:disabled) {
+  color: var(--foreground);
+  border-color: var(--border-strong);
+  background: var(--secondary);
+}
+
+.results-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.results-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .results-error {
   display: block;
   margin-top: 0.35rem;
