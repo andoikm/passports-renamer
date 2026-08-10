@@ -161,11 +161,11 @@ export function FilenameFormatBuilder({
       >
         <div className="ffb__toggle-main">
           <h2 id="ffb-heading" className="ffb__title">Filename format</h2>
-          {collapsed && (
+          {collapsed ? (
             <code className="ffb__preview-value ffb__preview-value--collapsed" aria-live="polite">
               {preview}
             </code>
-          )}
+          ) : null}
         </div>
         <span className="ffb__chevron" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,10 +177,12 @@ export function FilenameFormatBuilder({
       <div
         id="ffb-panel"
         className="ffb__panel"
-        hidden={collapsed}
         role="region"
         aria-labelledby="ffb-heading"
+        aria-hidden={collapsed || undefined}
+        {...(collapsed ? { inert: '' } : {})}
       >
+        <div className="ffb__panel-inner">
         <p className="ffb__subtitle">
           Add fields, drag to reorder, and choose a separator. The list order is the filename order.
         </p>
@@ -325,6 +327,7 @@ export function FilenameFormatBuilder({
           Save format
         </Button>
       </div>
+        </div>
       </div>
     </section>
   );
