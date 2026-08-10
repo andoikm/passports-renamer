@@ -29,6 +29,7 @@ export function FilenameFormatBuilder({
   const [customSep, setCustomSep] = useState('');
   const [dragIndex, setDragIndex] = useState(null);
   const [overIndex, setOverIndex] = useState(null);
+  const [collapsed, setCollapsed] = useState(true);
 
   const fields = listFilenameFields();
   const usedFields = useMemo(
@@ -146,15 +147,43 @@ export function FilenameFormatBuilder({
   const warningMessages = issues.filter((i) => i.level === 'warning');
 
   return (
-    <section className="ffb ui-card" aria-labelledby="ffb-heading">
-      <div className="ffb__header">
-        <div>
+    <section
+      className={`ffb ui-card ${collapsed ? 'ffb--collapsed' : ''}`}
+      aria-labelledby="ffb-heading"
+    >
+      <button
+        type="button"
+        className="ffb__toggle"
+        onClick={() => setCollapsed((v) => !v)}
+        aria-expanded={!collapsed}
+        aria-controls="ffb-panel"
+        id="ffb-toggle"
+      >
+        <div className="ffb__toggle-main">
           <h2 id="ffb-heading" className="ffb__title">Filename format</h2>
-          <p className="ffb__subtitle">
-            Add fields, drag to reorder, and choose a separator. The list order is the filename order.
-          </p>
+          {collapsed && (
+            <code className="ffb__preview-value ffb__preview-value--collapsed" aria-live="polite">
+              {preview}
+            </code>
+          )}
         </div>
-      </div>
+        <span className="ffb__chevron" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </button>
+
+      <div
+        id="ffb-panel"
+        className="ffb__panel"
+        hidden={collapsed}
+        role="region"
+        aria-labelledby="ffb-heading"
+      >
+        <p className="ffb__subtitle">
+          Add fields, drag to reorder, and choose a separator. The list order is the filename order.
+        </p>
 
       <div className="ffb__toolbar">
         <div className="ui-field ffb__add">
@@ -295,6 +324,7 @@ export function FilenameFormatBuilder({
         >
           Save format
         </Button>
+      </div>
       </div>
     </section>
   );

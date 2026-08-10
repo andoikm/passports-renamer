@@ -37,10 +37,10 @@ export { loadFilenameConfig, saveFilenameConfig } from './persistence.js';
 
 /** Sample values for live preview — same generator as production. */
 export const FILENAME_PREVIEW_SAMPLE = {
-  firstName: 'John',
-  lastName: 'Smith',
-  name: 'John',
-  surname: 'Smith',
+  firstName: 'FirstName',
+  lastName: 'LastName',
+  name: 'Name',
+  surname: 'Surname',
   originalName: 'passport-scan.pdf',
   date: new Date('2026-08-10T12:00:00'),
 };

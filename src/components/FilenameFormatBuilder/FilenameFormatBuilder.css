@@ -1,12 +1,65 @@
 .ffb {
   margin-bottom: 1.25rem;
-  padding: 1.25rem 1.35rem;
+  padding: 0.85rem 1.15rem;
   animation: app-fade-up 240ms var(--ease) both;
   animation-delay: 40ms;
 }
 
-.ffb__header {
-  margin-bottom: 1rem;
+.ffb--collapsed {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+.ffb__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.15rem 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+
+.ffb__toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ffb__toggle-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.ffb__chevron {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  border-radius: var(--radius-sm);
+  transition: transform var(--duration) var(--ease);
+}
+
+.ffb__toggle[aria-expanded='true'] .ffb__chevron {
+  transform: rotate(180deg);
+}
+
+.ffb__panel {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
 }
 
 .ffb__title {
@@ -18,11 +71,18 @@
 }
 
 .ffb__subtitle {
-  margin: 0.3rem 0 0;
+  margin: 0 0 1rem;
   font-size: 0.8125rem;
   color: var(--muted-foreground);
   line-height: 1.45;
   max-width: 40rem;
+}
+
+.ffb__preview-value--collapsed {
+  max-width: min(100%, 28rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ffb__toolbar {
@@ -314,7 +374,8 @@
     animation: none;
   }
 
-  .ffb-part {
+  .ffb-part,
+  .ffb__chevron {
     transition: none;
   }
 }
