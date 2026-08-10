@@ -1,57 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
 import { processFile } from './utils/processFile.js';
-import { buildRenamedFilename } from './utils/parseNameSurname.js';
+import { generateFilename, toFilenameData } from './filename/index.js';
 import { UploadZone } from './components/UploadZone.jsx';
 import { ResultsTable } from './components/ResultsTable.jsx';
 import { ProgressOverlay } from './components/ProgressOverlay.jsx';
 import { ThemeToggle } from './components/ThemeToggle.jsx';
-import { Button } from './components/ui/Button.jsx';
+import { FilenameFormatBuilder } from './components/FilenameFormatBuilder/FilenameFormatBuilder.jsx';
 import { useTheme } from './hooks/useTheme.js';
+import { useFilenameConfig } from './hooks/useFilenameConfig.js';
 import './App.css';
 
 export default function App() {
-  const STORAGE_KEY = 'passport-renamer-pattern';
   const { theme, toggleTheme } = useTheme();
+  const filename = useFilenameConfig();
 
   const [results, setResults] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [currentFile, setCurrentFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState('');
-  const [savingPattern, setSavingPattern] = useState(false);
-  const [patternSaved, setPatternSaved] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
-
-  const defaultPattern = {
-    left: 'first',
-    sep: '.',
-    right: 'last',
-    prefix: '',
-    suffix: '',
-  };
-
-  const [pattern, setPattern] = useState(() => {
-    if (typeof window === 'undefined') {
-      return defaultPattern;
-    }
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (!raw) return defaultPattern;
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object') return defaultPattern;
-      return {
-        ...defaultPattern,
-        ...parsed,
-      };
-    } catch {
-      try {
-        window.localStorage.removeItem(STORAGE_KEY);
-      } catch {
-        // ignore
-      }
-      return defaultPattern;
-    }
-  });
 
   useEffect(() => {
     document.documentElement.classList.add('theme-ready');
@@ -63,25 +31,6 @@ export default function App() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  const handleSavePattern = async () => {
-    if (savingPattern) return;
-    setSavingPattern(true);
-    setPatternSaved(false);
-    try {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pattern));
-      }
-      // Brief loading state so the button feedback is perceptible
-      await new Promise((r) => setTimeout(r, 280));
-      setPatternSaved(true);
-      window.setTimeout(() => setPatternSaved(false), 2000);
-    } catch {
-      // ignore quota / private-mode errors
-    } finally {
-      setSavingPattern(false);
-    }
-  };
 
   const handleFiles = useCallback(async (files) => {
     const pdfFiles = Array.from(files).filter((f) => f.name.toLowerCase().endsWith('.pdf'));
@@ -137,6 +86,12 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  const buildNameForResult = useCallback(
+    (result) =>
+      generateFilename(filename.config, toFilenameData(result), 'pdf'),
+    [filename.config]
+  );
+
   return (
     <div className="app">
       <header className={`app-nav ${navScrolled ? 'app-nav--scrolled' : ''}`}>
@@ -163,125 +118,17 @@ export default function App() {
         </p>
       </section>
 
-      <section className="pattern-config ui-card" aria-labelledby="pattern-heading">
-        <div className="pattern-config__header">
-          <div>
-            <h2 id="pattern-heading" className="pattern-title">Filename format</h2>
-            <p className="pattern-subtitle">Choose how first and last names appear in the download name.</p>
-          </div>
-        </div>
-
-        <div className="pattern-row">
-          <div className="ui-field">
-            <label className="ui-label" htmlFor="pattern-prefix">Prefix</label>
-            <input
-              id="pattern-prefix"
-              className="ui-input"
-              type="text"
-              placeholder="optional"
-              value={pattern.prefix}
-              onChange={(e) =>
-                setPattern((prev) => ({
-                  ...prev,
-                  prefix: e.target.value,
-                }))
-              }
-            />
-          </div>
-
-          <div className="ui-field">
-            <label className="ui-label" htmlFor="pattern-left">Left part</label>
-            <select
-              id="pattern-left"
-              className="ui-select"
-              value={pattern.left}
-              onChange={(e) =>
-                setPattern((prev) => ({
-                  ...prev,
-                  left: e.target.value,
-                }))
-              }
-            >
-              <option value="first">firstName</option>
-              <option value="last">lastName</option>
-            </select>
-          </div>
-
-          <div className="ui-field">
-            <label className="ui-label" htmlFor="pattern-sep">Separator</label>
-            <select
-              id="pattern-sep"
-              className="ui-select"
-              value={pattern.sep}
-              onChange={(e) =>
-                setPattern((prev) => ({
-                  ...prev,
-                  sep: e.target.value,
-                }))
-              }
-            >
-              <option value=".">.</option>
-              <option value="_">_</option>
-              <option value="-">-</option>
-              <option value="">none</option>
-            </select>
-          </div>
-
-          <div className="ui-field">
-            <label className="ui-label" htmlFor="pattern-right">Right part</label>
-            <select
-              id="pattern-right"
-              className="ui-select"
-              value={pattern.right}
-              onChange={(e) =>
-                setPattern((prev) => ({
-                  ...prev,
-                  right: e.target.value,
-                }))
-              }
-            >
-              <option value="first">firstName</option>
-              <option value="last">lastName</option>
-            </select>
-          </div>
-
-          <div className="ui-field">
-            <label className="ui-label" htmlFor="pattern-suffix">Suffix</label>
-            <input
-              id="pattern-suffix"
-              className="ui-input"
-              type="text"
-              placeholder="optional"
-              value={pattern.suffix}
-              onChange={(e) =>
-                setPattern((prev) => ({
-                  ...prev,
-                  suffix: e.target.value,
-                }))
-              }
-            />
-          </div>
-
-          <div className="pattern-actions">
-            <Button
-              variant="secondary"
-              onClick={handleSavePattern}
-              loading={savingPattern}
-              aria-label="Save filename format"
-            >
-              Save format
-            </Button>
-          </div>
-        </div>
-
-        <div className="pattern-preview" aria-live="polite">
-          <span className="pattern-preview__label">Example</span>
-          <code className="pattern-preview__value">
-            {buildRenamedFilename('john', 'doe', pattern)}
-          </code>
-          {patternSaved && <span className="pattern-saved">Saved</span>}
-        </div>
-      </section>
+      <FilenameFormatBuilder
+        config={filename.config}
+        onChange={filename.setConfig}
+        onSave={filename.save}
+        onReset={filename.resetToDefault}
+        saving={filename.saving}
+        savedFlash={filename.savedFlash}
+        dirty={filename.dirty}
+        issues={filename.issues}
+        hasErrors={filename.hasErrors}
+      />
 
       <UploadZone onFiles={handleFiles} accept=".pdf" disabled={processing} />
 
@@ -294,7 +141,11 @@ export default function App() {
       )}
 
       {results.length > 0 && (
-        <ResultsTable results={results} onDownload={handleDownload} pattern={pattern} />
+        <ResultsTable
+          results={results}
+          onDownload={handleDownload}
+          buildFilename={buildNameForResult}
+        />
       )}
 
       <footer className="footer">

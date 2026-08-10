@@ -101,89 +101,6 @@
   line-height: 1.55;
 }
 
-/* Pattern configuration card */
-.pattern-config {
-  margin-bottom: 1.25rem;
-  padding: 1.25rem 1.35rem;
-  animation: app-fade-up 240ms var(--ease) both;
-  animation-delay: 40ms;
-}
-
-.pattern-config__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.pattern-title {
-  margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 650;
-  letter-spacing: -0.015em;
-  color: var(--foreground);
-}
-
-.pattern-subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-}
-
-.pattern-row {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0.75rem;
-  align-items: end;
-}
-
-.pattern-row .ui-field:nth-child(1),
-.pattern-row .ui-field:nth-child(5) {
-  grid-column: span 1;
-}
-
-.pattern-row .pattern-actions {
-  display: flex;
-  align-items: flex-end;
-}
-
-.pattern-preview {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin: 1rem 0 0;
-  padding: 0.75rem 0.9rem;
-  border-radius: var(--radius-md);
-  background: var(--muted);
-  border: 1px solid transparent;
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-}
-
-.pattern-preview__label {
-  font-weight: 550;
-}
-
-.pattern-preview__value {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.8125rem;
-  color: var(--foreground);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.2rem 0.5rem;
-  letter-spacing: -0.01em;
-}
-
-.pattern-saved {
-  font-size: 0.75rem;
-  color: var(--success);
-  font-weight: 550;
-  animation: app-fade-in 180ms var(--ease);
-}
-
 /* Upload */
 .upload-zone {
   margin-bottom: 1.5rem;
@@ -603,20 +520,6 @@
   }
 }
 
-@media (max-width: 900px) {
-  .pattern-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pattern-row .pattern-actions {
-    grid-column: 1 / -1;
-  }
-
-  .pattern-row .pattern-actions .ui-btn {
-    width: 100%;
-  }
-}
-
 @media (max-width: 640px) {
   .app {
     padding: 0 1rem 2rem;
@@ -624,14 +527,6 @@
 
   .app-hero {
     margin-bottom: 1.25rem;
-  }
-
-  .pattern-config {
-    padding: 1rem;
-  }
-
-  .pattern-row {
-    grid-template-columns: 1fr;
   }
 
   .upload-label {
@@ -646,12 +541,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .app-hero,
-  .pattern-config,
   .upload-zone,
   .results,
   .progress-overlay,
-  .progress-card,
-  .pattern-saved {
+  .progress-card {
     animation: none;
   }
 

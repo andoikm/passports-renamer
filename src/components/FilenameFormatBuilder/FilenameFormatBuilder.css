@@ -1,0 +1,320 @@
+.ffb {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.35rem;
+  animation: app-fade-up 240ms var(--ease) both;
+  animation-delay: 40ms;
+}
+
+.ffb__header {
+  margin-bottom: 1rem;
+}
+
+.ffb__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--foreground);
+}
+
+.ffb__subtitle {
+  margin: 0.3rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.45;
+  max-width: 40rem;
+}
+
+.ffb__toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: end;
+}
+
+.ffb__add-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ffb__add-row .ui-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.ffb__structure-label {
+  font-size: 0.75rem;
+  font-weight: 550;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.ffb__empty {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--muted) 50%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.ffb__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ffb-part {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    background-color var(--duration) var(--ease),
+    opacity var(--duration) var(--ease),
+    transform var(--duration) var(--ease);
+}
+
+.ffb-part--dragging {
+  opacity: 0.55;
+}
+
+.ffb-part--drop-target {
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+
+.ffb-part__handle {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: grab;
+  padding: 0;
+}
+
+.ffb-part__handle:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.ffb-part__handle:active {
+  cursor: grabbing;
+}
+
+.ffb-part__handle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ffb-part__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ffb-part__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ffb-part__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.ffb-part__type {
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0.1rem 0.45rem;
+}
+
+.ffb-part__static-input {
+  max-width: 20rem;
+}
+
+.ffb-part__option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: 12rem;
+}
+
+.ffb-part__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.ffb-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+
+.ffb-icon-btn:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.ffb-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ffb-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ffb__preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: var(--muted);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.ffb__preview-label {
+  font-weight: 550;
+}
+
+.ffb__preview-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.5rem;
+  letter-spacing: -0.01em;
+  word-break: break-all;
+}
+
+.ffb__saved {
+  font-size: 0.75rem;
+  color: var(--success);
+  font-weight: 550;
+}
+
+.ffb__dirty {
+  font-size: 0.75rem;
+  color: var(--warning);
+  font-weight: 550;
+}
+
+.ffb__issues {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ffb__issue {
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.ffb__issue--error {
+  color: var(--destructive);
+  background: color-mix(in srgb, var(--destructive) 8%, var(--card));
+  border-color: color-mix(in srgb, var(--destructive) 28%, var(--border));
+}
+
+.ffb__issue--warning {
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, var(--card));
+  border-color: color-mix(in srgb, var(--warning) 28%, var(--border));
+}
+
+.ffb__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .ffb__toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ffb {
+    padding: 1rem;
+  }
+
+  .ffb-part {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .ffb-part__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .ffb__add-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ffb {
+    animation: none;
+  }
+
+  .ffb-part {
+    transition: none;
+  }
+}

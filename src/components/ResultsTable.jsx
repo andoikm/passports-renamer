@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { buildRenamedFilename } from '../utils/parseNameSurname.js';
 import { Button } from './ui/Button.jsx';
 
-export function ResultsTable({ results, onDownload, pattern }) {
+export function ResultsTable({ results, onDownload, buildFilename }) {
   const [downloadingId, setDownloadingId] = useState(null);
 
   const handleDownloadClick = async (result, downloadName) => {
@@ -40,7 +39,7 @@ export function ResultsTable({ results, onDownload, pattern }) {
           </thead>
           <tbody>
             {results.map((r) => {
-              const downloadName = buildRenamedFilename(r.name, r.surname, pattern);
+              const downloadName = buildFilename(r);
               const isUnknown = r.name === 'unknown' || r.surname === 'unknown';
               return (
                 <tr
