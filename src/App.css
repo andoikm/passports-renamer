@@ -302,10 +302,18 @@
 
 .results-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.results-header__left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
 }
 
 .results-title {

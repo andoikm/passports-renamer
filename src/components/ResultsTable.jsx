@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { Button } from './ui/Button.jsx';
 
 function isUnknownResult(r) {
   return r.name === 'unknown' || r.surname === 'unknown';
@@ -6,6 +7,7 @@ function isUnknownResult(r) {
 
 export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) {
   const [downloadingId, setDownloadingId] = useState(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
   const viewButtonRefs = useRef(/** @type {Record<string, HTMLButtonElement | null>} */ ({}));
 
   const sortedResults = useMemo(() => {
@@ -16,8 +18,18 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
     });
   }, [results]);
 
+  const hasUnknown = useMemo(
+    () => results.some((r) => isUnknownResult(r)),
+    [results]
+  );
+
+  const downloadableResults = useMemo(
+    () => results.filter((r) => r.file && !r.error),
+    [results]
+  );
+
   const handleDownloadClick = async (result, downloadName) => {
-    if (!downloadName || downloadingId) return;
+    if (!downloadName || downloadingId || downloadingAll) return;
     setDownloadingId(result.id);
     try {
       onDownload(result, downloadName);
@@ -27,13 +39,56 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
     }
   };
 
+  const handleDownloadAll = async () => {
+    if (hasUnknown || downloadingAll || downloadingId || downloadableResults.length === 0) {
+      return;
+    }
+    setDownloadingAll(true);
+    try {
+      for (const result of downloadableResults) {
+        const downloadName = buildFilename(result);
+        if (!downloadName || !result.file) continue;
+        onDownload(result, downloadName);
+        // Stagger downloads so browsers don't block them
+        await new Promise((r) => setTimeout(r, 350));
+      }
+    } finally {
+      setDownloadingAll(false);
+    }
+  };
+
   return (
     <section className="results" aria-labelledby="results-heading">
       <div className="results-header">
-        <h2 id="results-heading" className="results-title">Processed files</h2>
-        <span className="results-count">
-          {results.length} {results.length === 1 ? 'file' : 'files'}
-        </span>
+        <div className="results-header__left">
+          <h2 id="results-heading" className="results-title">Processed files</h2>
+          <span className="results-count">
+            {results.length} {results.length === 1 ? 'file' : 'files'}
+          </span>
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleDownloadAll}
+          loading={downloadingAll}
+          disabled={
+            hasUnknown ||
+            downloadableResults.length === 0 ||
+            Boolean(downloadingId)
+          }
+          title={
+            hasUnknown
+              ? 'Resolve all unknown names before downloading all'
+              : 'Download all files'
+          }
+          aria-label={
+            hasUnknown
+              ? 'Download all disabled because at least one file has an unknown name'
+              : 'Download all files'
+          }
+        >
+          Download all
+        </Button>
       </div>
 
       <div className="results-table-wrap">
@@ -110,7 +165,7 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
                           title="Download"
                           aria-label={`Download ${downloadName}`}
                           aria-busy={downloadingId === r.id || undefined}
-                          disabled={Boolean(downloadingId)}
+                          disabled={Boolean(downloadingId) || downloadingAll}
                           onClick={() => handleDownloadClick(r, downloadName)}
                         >
                           {downloadingId === r.id ? (
