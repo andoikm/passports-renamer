@@ -370,11 +370,21 @@
 }
 
 .results-row--error {
-  background: color-mix(in srgb, var(--destructive) 6%, transparent);
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
 }
 
 .results-row--unknown:not(.results-row--error) {
-  background: color-mix(in srgb, var(--warning) 7%, transparent);
+  background: color-mix(in srgb, var(--destructive) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--destructive);
+}
+
+.results-row--unknown:not(.results-row--error):hover {
+  background: color-mix(in srgb, var(--destructive) 20%, transparent);
+}
+
+.results-row--unknown .results-cell--name {
+  color: var(--destructive);
+  font-weight: 650;
 }
 
 .results-cell--file {
@@ -412,9 +422,9 @@
 }
 
 .results-badge--unknown {
-  background: color-mix(in srgb, var(--warning) 14%, var(--card));
-  border-color: color-mix(in srgb, var(--warning) 35%, var(--border));
-  color: var(--warning);
+  background: color-mix(in srgb, var(--destructive) 16%, var(--card));
+  border-color: color-mix(in srgb, var(--destructive) 45%, var(--border));
+  color: var(--destructive);
 }
 
 .results-badge--error {
@@ -464,6 +474,16 @@
 .results-icon-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.results-icon-btn--download:hover:not(:disabled) {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.results-icon-btn--loading {
+  pointer-events: none;
 }
 
 .results-error {

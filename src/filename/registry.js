@@ -95,7 +95,6 @@ export const FILENAME_FIELD_REGISTRY = {
     },
   },
 };
-
 /** @returns {FilenameFieldDefinition[]} */
 export function listFilenameFields() {
   return Object.values(FILENAME_FIELD_REGISTRY);

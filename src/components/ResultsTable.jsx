@@ -1,9 +1,20 @@
-import { useRef, useState } from 'react';
-import { Button } from './ui/Button.jsx';
+import { useMemo, useRef, useState } from 'react';
+
+function isUnknownResult(r) {
+  return r.name === 'unknown' || r.surname === 'unknown';
+}
 
 export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) {
   const [downloadingId, setDownloadingId] = useState(null);
   const viewButtonRefs = useRef(/** @type {Record<string, HTMLButtonElement | null>} */ ({}));
+
+  const sortedResults = useMemo(() => {
+    return [...results].sort((a, b) => {
+      const aUnknown = isUnknownResult(a) ? 0 : 1;
+      const bUnknown = isUnknownResult(b) ? 0 : 1;
+      return aUnknown - bUnknown;
+    });
+  }, [results]);
 
   const handleDownloadClick = async (result, downloadName) => {
     if (!downloadName || downloadingId) return;
@@ -37,9 +48,9 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
             </tr>
           </thead>
           <tbody>
-            {results.map((r) => {
+            {sortedResults.map((r) => {
               const downloadName = buildFilename(r);
-              const isUnknown = r.name === 'unknown' || r.surname === 'unknown';
+              const isUnknown = isUnknownResult(r);
               const canView = Boolean(r.file) && !r.error;
               return (
                 <tr
@@ -91,16 +102,27 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf }) 
                         </svg>
                       </button>
                       {downloadName && (
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          loading={downloadingId === r.id}
-                          disabled={Boolean(downloadingId) && downloadingId !== r.id}
-                          onClick={() => handleDownloadClick(r, downloadName)}
+                        <button
+                          type="button"
+                          className={`results-icon-btn results-icon-btn--download ${
+                            downloadingId === r.id ? 'results-icon-btn--loading' : ''
+                          }`}
+                          title="Download"
                           aria-label={`Download ${downloadName}`}
+                          aria-busy={downloadingId === r.id || undefined}
+                          disabled={Boolean(downloadingId)}
+                          onClick={() => handleDownloadClick(r, downloadName)}
                         >
-                          Download
-                        </Button>
+                          {downloadingId === r.id ? (
+                            <span className="ui-spinner" aria-hidden="true" />
+                          ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                          )}
+                        </button>
                       )}
                     </div>
                     {r.error && <span className="results-error">{r.error}</span>}
