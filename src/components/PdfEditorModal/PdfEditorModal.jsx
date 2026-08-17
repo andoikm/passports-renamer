@@ -11,6 +11,8 @@ import './PdfEditorModal.css';
  *   originalName?: string,
  *   name?: string,
  *   surname?: string,
+ *   passportNumber?: string,
+ *   expiryDate?: string,
  *   file?: File | Blob,
  * }} PdfEditorRow
  */
@@ -19,9 +21,10 @@ import './PdfEditorModal.css';
  * PDF view + manual edit modal.
  *
  * Case A (AcroForm present): edit native form fields + save rewritten PDF bytes.
- * Case B (flat PDF — typical for passport scans): edit OCR metadata (name/surname)
- * used by this app; PDF binary is not rewritten. Structure leaves room for a
- * future field-overlay system without changing the table API.
+ * Case B (flat PDF — typical for passport scans): edit OCR metadata
+ * (name, surname, passport number, expiry) used by this app; PDF binary
+ * is not rewritten. Structure leaves room for a future field-overlay
+ * system without changing the table API.
  */
 export function PdfEditorModal({
   open,
@@ -47,14 +50,25 @@ export function PdfEditorModal({
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [passportNumber, setPassportNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   const [initialFirstName, setInitialFirstName] = useState('');
   const [initialLastName, setInitialLastName] = useState('');
+  const [initialPassportNumber, setInitialPassportNumber] = useState('');
+  const [initialExpiryDate, setInitialExpiryDate] = useState('');
 
   const documentTitle = row?.originalName || 'Document';
 
   const dirty = useMemo(() => {
     if (!open) return false;
-    if (firstName !== initialFirstName || lastName !== initialLastName) return true;
+    if (
+      firstName !== initialFirstName ||
+      lastName !== initialLastName ||
+      passportNumber !== initialPassportNumber ||
+      expiryDate !== initialExpiryDate
+    ) {
+      return true;
+    }
     if (hasAcroForm) {
       for (const field of acroFields) {
         if ((acroValues[field.name] ?? '') !== (initialAcroValues[field.name] ?? '')) {
@@ -67,8 +81,12 @@ export function PdfEditorModal({
     open,
     firstName,
     lastName,
+    passportNumber,
+    expiryDate,
     initialFirstName,
     initialLastName,
+    initialPassportNumber,
+    initialExpiryDate,
     hasAcroForm,
     acroFields,
     acroValues,
@@ -119,10 +137,16 @@ export function PdfEditorModal({
 
       const fn = row.name ?? '';
       const ln = row.surname ?? '';
+      const pn = row.passportNumber && row.passportNumber !== 'unknown' ? row.passportNumber : '';
+      const ex = row.expiryDate && row.expiryDate !== 'unknown' ? row.expiryDate : '';
       setFirstName(fn);
       setLastName(ln);
+      setPassportNumber(pn);
+      setExpiryDate(ex);
       setInitialFirstName(fn);
       setInitialLastName(ln);
+      setInitialPassportNumber(pn);
+      setInitialExpiryDate(ex);
     } catch (err) {
       if (loadId !== loadIdRef.current) return;
       setLoadError(err?.message || 'Failed to load PDF');
@@ -179,11 +203,15 @@ export function PdfEditorModal({
 
       setInitialFirstName(firstName);
       setInitialLastName(lastName);
+      setInitialPassportNumber(passportNumber);
+      setInitialExpiryDate(expiryDate);
 
       await onSaved?.({
         id: row.id,
         name: firstName.trim() || 'unknown',
         surname: lastName.trim() || 'unknown',
+        passportNumber: passportNumber.trim() || 'unknown',
+        expiryDate: expiryDate.trim() || 'unknown',
         file: nextFile,
         hasAcroForm,
       });
@@ -241,13 +269,12 @@ export function PdfEditorModal({
           {!hasAcroForm && !loading && !loadError && (
             <p className="pdf-editor__hint">
               This PDF has no interactive form fields. You can correct the extracted
-              first and last name used for renaming. In-PDF field overlays can be
-              added later without changing this workflow.
+              name, surname, passport number, and expiry used for renaming.
             </p>
           )}
 
           <div className="pdf-editor__section">
-            <h3 className="pdf-editor__section-title">Extracted name</h3>
+            <h3 className="pdf-editor__section-title">Extracted fields</h3>
             <div className="ui-field">
               <label className="ui-label" htmlFor="pdf-edit-first-name">First name</label>
               <input
@@ -277,6 +304,36 @@ export function PdfEditorModal({
                 }}
                 disabled={loading || !!loadError || saving}
                 autoComplete="off"
+              />
+            </div>
+            <div className="ui-field">
+              <label className="ui-label" htmlFor="pdf-edit-passport-number">Passport number</label>
+              <input
+                id="pdf-edit-passport-number"
+                className="ui-input"
+                type="text"
+                value={passportNumber}
+                onChange={(e) => {
+                  setPassportNumber(e.target.value);
+                  setSaveSuccess(false);
+                }}
+                disabled={loading || !!loadError || saving}
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </div>
+            <div className="ui-field">
+              <label className="ui-label" htmlFor="pdf-edit-expiry">Expiry date</label>
+              <input
+                id="pdf-edit-expiry"
+                className="ui-input"
+                type="date"
+                value={/^\d{4}-\d{2}-\d{2}$/.test(expiryDate) ? expiryDate : ''}
+                onChange={(e) => {
+                  setExpiryDate(e.target.value);
+                  setSaveSuccess(false);
+                }}
+                disabled={loading || !!loadError || saving}
               />
             </div>
           </div>

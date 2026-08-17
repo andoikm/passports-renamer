@@ -205,3 +205,50 @@ describe('date formats', () => {
     ).toBe('20260810.pdf');
   });
 });
+
+describe('passport number and expiry', () => {
+  it('includes passport number and expiry in generated names', () => {
+    const data = toFilenameData({
+      name: 'John',
+      surname: 'Smith',
+      passportNumber: 'AB1234567',
+      expiryDate: '2030-01-15',
+    });
+    expect(
+      generateFilename(config(['lastName', 'passportNumber', 'expiryDate'], '_'), data, 'pdf')
+    ).toBe('smith_ab1234567_2030-01-15.pdf');
+  });
+
+  it('skips unknown passport fields', () => {
+    const data = toFilenameData({
+      name: 'John',
+      surname: 'Smith',
+      passportNumber: 'unknown',
+      expiryDate: 'unknown',
+    });
+    expect(
+      generateFilename(config(['firstName', 'passportNumber', 'expiryDate'], '_'), data, 'pdf')
+    ).toBe('john.pdf');
+  });
+
+  it('formats expiry date according to options', () => {
+    const data = toFilenameData({
+      name: 'John',
+      surname: 'Smith',
+      expiryDate: '2030-01-15',
+    });
+    expect(
+      generateFilename(
+        {
+          version: 1,
+          separator: '_',
+          parts: [
+            { id: 'e', type: 'field', field: 'expiryDate', options: { format: 'YYYYMMDD' } },
+          ],
+        },
+        data,
+        'pdf'
+      )
+    ).toBe('20300115.pdf');
+  });
+});

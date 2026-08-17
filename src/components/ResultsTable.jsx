@@ -1,8 +1,14 @@
 import { useMemo, useRef, useState } from 'react';
 import { Button } from './ui/Button.jsx';
 
+const EXTRACTED_FIELDS = ['name', 'surname', 'passportNumber', 'expiryDate'];
+
+function isUnknownValue(value) {
+  return !value || value === 'unknown';
+}
+
 function isUnknownResult(r) {
-  return r.name === 'unknown' || r.surname === 'unknown';
+  return EXTRACTED_FIELDS.some((key) => isUnknownValue(r[key]));
 }
 
 export function ResultsTable({ results, onDownload, buildFilename, onViewPdf, onDelete }) {
@@ -78,12 +84,12 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf, on
           }
           title={
             hasUnknown
-              ? 'Resolve all unknown names before downloading all'
+              ? 'Resolve all unknown fields before downloading all'
               : 'Download all files'
           }
           aria-label={
             hasUnknown
-              ? 'Download all disabled because at least one file has an unknown name'
+              ? 'Download all disabled because at least one file has an unknown field'
               : 'Download all files'
           }
         >
@@ -98,6 +104,8 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf, on
               <th scope="col">Original file</th>
               <th scope="col">Name</th>
               <th scope="col">Surname</th>
+              <th scope="col">Passport no.</th>
+              <th scope="col">Expiry</th>
               <th scope="col">New filename</th>
               <th scope="col">Actions</th>
             </tr>
@@ -124,8 +132,50 @@ export function ResultsTable({ results, onDownload, buildFilename, onViewPdf, on
                       <span className="results-badge results-badge--unknown">Review</span>
                     )}
                   </td>
-                  <td className="results-cell results-cell--name">{r.name}</td>
-                  <td className="results-cell results-cell--name">{r.surname}</td>
+                  <td
+                    className={[
+                      'results-cell',
+                      'results-cell--name',
+                      isUnknownValue(r.name) && 'results-cell--unknown',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {r.name || 'unknown'}
+                  </td>
+                  <td
+                    className={[
+                      'results-cell',
+                      'results-cell--name',
+                      isUnknownValue(r.surname) && 'results-cell--unknown',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {r.surname || 'unknown'}
+                  </td>
+                  <td
+                    className={[
+                      'results-cell',
+                      'results-cell--meta',
+                      isUnknownValue(r.passportNumber) && 'results-cell--unknown',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {r.passportNumber || 'unknown'}
+                  </td>
+                  <td
+                    className={[
+                      'results-cell',
+                      'results-cell--meta',
+                      isUnknownValue(r.expiryDate) && 'results-cell--unknown',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {r.expiryDate || 'unknown'}
+                  </td>
                   <td className="results-cell results-cell--filename">
                     {downloadName || '—'}
                   </td>

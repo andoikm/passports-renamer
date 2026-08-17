@@ -74,8 +74,11 @@ export function FilenameFormatBuilder({
       type: 'field',
       field: def.id,
     };
-    if (def.id === 'date') {
-      part.options = { format: 'YYYY-MM-DD' };
+    if (def.optionFields?.length) {
+      part.options = {};
+      for (const opt of def.optionFields) {
+        if (opt.options[0]) part.options[opt.key] = opt.options[0].value;
+      }
     }
     updateParts([...config.parts, part]);
     setAddValue('');

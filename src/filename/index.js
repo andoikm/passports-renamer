@@ -8,6 +8,8 @@ export {
   getFilenameField,
   isRegisteredField,
   formatDateValue,
+  coerceDate,
+  DATE_FORMAT_OPTIONS,
 } from './registry.js';
 
 export {
@@ -43,4 +45,6 @@ export const FILENAME_PREVIEW_SAMPLE = {
   surname: 'Surname',
   originalName: 'passport-scan.pdf',
   date: new Date('2026-08-10T12:00:00'),
+  passportNumber: 'AB1234567',
+  expiryDate: '2030-01-15',
 };
