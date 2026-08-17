@@ -342,7 +342,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
-  min-width: 640px;
+  min-width: 860px;
 }
 
 .results-table th {
@@ -390,7 +390,7 @@
   background: color-mix(in srgb, var(--destructive) 20%, transparent);
 }
 
-.results-row--unknown .results-cell--name {
+.results-cell--unknown {
   color: var(--destructive);
   font-weight: 650;
 }
@@ -405,6 +405,11 @@
 
 .results-cell--name {
   font-weight: 550;
+}
+
+.results-cell--meta {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .results-cell--filename {

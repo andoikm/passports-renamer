@@ -68,7 +68,7 @@ export function generateFilename(configuration, data = {}, extension = 'pdf') {
 
 /**
  * Build the data object used for passport rename results.
- * @param {{ name?: string, surname?: string, firstName?: string, lastName?: string, originalName?: string, date?: Date | string | number }} result
+ * @param {{ name?: string, surname?: string, firstName?: string, lastName?: string, originalName?: string, date?: Date | string | number, passportNumber?: string, expiryDate?: string }} result
  */
 export function toFilenameData(result = {}) {
   return {
@@ -78,5 +78,7 @@ export function toFilenameData(result = {}) {
     surname: result.surname ?? result.lastName ?? '',
     originalName: result.originalName ?? '',
     date: result.date ?? new Date(),
+    passportNumber: result.passportNumber ?? '',
+    expiryDate: result.expiryDate ?? '',
   };
 }

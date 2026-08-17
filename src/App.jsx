@@ -73,6 +73,8 @@ export default function App() {
           file,
           name: 'unknown',
           surname: 'unknown',
+          passportNumber: 'unknown',
+          expiryDate: 'unknown',
           ocrText: '',
           error: err?.message || 'Processing failed',
         });
@@ -121,6 +123,8 @@ export default function App() {
           ...item,
           name: payload.name,
           surname: payload.surname,
+          passportNumber: payload.passportNumber,
+          expiryDate: payload.expiryDate,
           file: payload.file || item.file,
         };
       })
@@ -131,6 +135,8 @@ export default function App() {
             ...prev,
             name: payload.name,
             surname: payload.surname,
+            passportNumber: payload.passportNumber,
+            expiryDate: payload.expiryDate,
             file: payload.file || prev.file,
           }
         : prev
