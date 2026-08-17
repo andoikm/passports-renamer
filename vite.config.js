@@ -8,6 +8,6 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    setupFiles: ['./vitest.setup.js'],
+    setupFiles: ['./vitest.polyfill.js', './vitest.setup.js'],
   },
 });
